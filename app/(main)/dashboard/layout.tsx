@@ -6,7 +6,6 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const { orgId } = auth();
   // const {} = await
 
-  console.log(orgId)
   return (
     <main>
       <nav>

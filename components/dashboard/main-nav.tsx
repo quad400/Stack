@@ -1,9 +1,11 @@
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
-import { OrganizationSwitcher, UserButton } from "@clerk/nextjs";
+import UserButton from "./user-button";
 
 const MainNav = () => {
+
+
   return (
     <nav className="flex justify-between items-center px-3 md:px-6 py-1.5 md:py-3 shadow-md">
       <div className="flex justify-start items-center">
@@ -23,9 +25,7 @@ const MainNav = () => {
         </Button>
       </div>
       <div className="flex justify-center items-center space-x-3">
-        <OrganizationSwitcher hidePersonal />
-
-        <UserButton />
+        <UserButton  />
       </div>
     </nav>
   );

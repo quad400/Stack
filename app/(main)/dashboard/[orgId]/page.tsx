@@ -1,8 +1,6 @@
 
 const OrgIdPage = () => {
-  return (
-    <div>OrgIdPage</div>
-  )
-}
+  return <div>Board</div>;
+};
 
-export default OrgIdPage
+export default OrgIdPage;
