@@ -60,7 +60,7 @@ const SideNav = () => {
 
       <div className="mt-4">
         {userMemberships?.data?.map((org) => (
-          <Accordion type="single" collapsible>
+          <Accordion type="single" key={org?.id} collapsible>
             <AccordionItem value={org?.organization?.id}>
               <AccordionTrigger>
                 <div className="flex space-x-2 justify-start items-center">
