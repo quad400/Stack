@@ -1,25 +1,23 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { useOrganizationList } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { getUser } from "@/lib/actions/user-action";
+import NoWorkspace from "@/components/dashboard/no-workspace";
+import { getWorkspaces } from "@/lib/actions/workspace-actions";
 
-const DashboardPage = () => {
-  const router = useRouter();
-  const { isLoaded, userMemberships } = useOrganizationList({
-    userMemberships: {
-      infinite: true,
-    },
-  });
+const DashboardPage = async () => {
+  const workspaces = await getWorkspaces();
 
-  if (!isLoaded) {
-    return null;
-  } else if (isLoaded === true && userMemberships?.data.length === 0) {
-    router.push(`/org-select`);
-    console.log("No organizations found");
-  } else {
-    router.push(`/dashboard/${userMemberships?.data[0]?.organization.id}`);
-    console.log("Redirecting to first organization");
+  const user = await getUser();
+
+  if (!user) {
+    return redirect("/sign-in");
   }
+
+  if (workspaces.length === 0) {
+    return <NoWorkspace />;
+  }
+
+  return redirect(`/dashboard/${workspaces[0]._id}`);
 };
 
 export default DashboardPage;

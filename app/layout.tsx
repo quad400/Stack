@@ -1,9 +1,11 @@
+import { Toaster } from "sonner";
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "../lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ModalProvider } from "@/components/providers/modal-provider";
+import StoreProvider from "@/components/providers/store-provider";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -38,8 +40,9 @@ export default function RootLayout({
             dm_sans.className
           )}
         >
+          <Toaster />
           <ModalProvider />
-          {children}
+          <StoreProvider>{children}</StoreProvider>
         </body>
       </html>
     </ClerkProvider>

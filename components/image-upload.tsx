@@ -13,7 +13,7 @@ const ImageUpload = ({ value, onChange }: ImageUploadProps) => {
   return (
     <div className="flex flex-row justify-start items-center space-x-3">
       {value && fileType !== "pdf" && (
-        <div className="relative h-40 w-52">
+        <div className="relative h-20 w-32">
           <Image
             fill
             src={value}

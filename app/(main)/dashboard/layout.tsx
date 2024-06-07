@@ -3,16 +3,15 @@ import MainNav from "../../../components/dashboard/main-nav";
 import { auth } from "@clerk/nextjs/server";
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
-  const { orgId } = auth();
   // const {} = await
 
   return (
-    <main>
+    <main className="flex flex-col h-full w-full">
       <nav>
         <MainNav />
       </nav>
 
-      <div>{children}</div>
+      <div className="h-full w-full">{children}</div>
     </main>
   );
 };

@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import axios from "axios";
+import qs from "query-string";
 import { toast } from "sonner";
 import { useModal } from "@/hooks/use-modal-store";
 import { useForm } from "react-hook-form";
@@ -23,25 +24,26 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import ImageUpload from "../image-upload";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import ImageSelector from "../board/image-selector";
 
 const formSchema = z.object({
   name: z.string().min(3, {
-    message: "Workspace name is required",
+    message: "Board name is required",
   }),
   imageUri: z.string().min(3, {
-    message: "Workspace image is required",
+    message: "Board image is required",
   }),
 });
 
-const CreateWorkspaceModal = () => {
+const CreateBoardModal = () => {
+  const router = useRouter();
+  const { workspaceId } = useParams();
 
-  const router = useRouter()
   const { type, isOpen, onClose } = useModal();
 
-  const open = type === "createWorkspace" && isOpen;
+  const open = type === "createBoard" && isOpen;
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -51,22 +53,28 @@ const CreateWorkspaceModal = () => {
     },
   });
 
-  const isLoading = form.formState.isSubmitting
+  const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>)=> {
-      try{
-        const {data} = await axios.post("/api/workspaces", values)
-        onClose()
-        form.reset()
-        toast.success("Workspace created successfully")
-        router.push(`/dashboard/${data?._id}`)
-      }catch(error){
-        toast.error("Error creating workspace")
-      }
-  }
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const url = qs.stringifyUrl({
+        url: `/api/workspaces/board`,
+        query: {
+          workspaceId: workspaceId,
+        },
+      });
+     await axios.post(url, values);
+      onClose();
+      form.reset();
+      toast.success("Board created successfully");
+      router.refresh()
+    } catch (error) {
+      toast.error("Error creating workspace");
+    }
+  };
 
   return (
-    <Dialog open={open} onOpenChange={() => onClose()} >
+    <Dialog open={open} onOpenChange={() => onClose()}>
       <DialogContent className="w-full p-0 border-0">
         <DialogTitle className="text-center text-xl mt-5 font-bold text-neutral-900">
           Create Workspace
@@ -80,17 +88,30 @@ const CreateWorkspaceModal = () => {
             <div className="mx-6 flex flex-col space-y-3">
               <FormField
                 control={form.control}
+                name="imageUri"
+                render={({ field }) => (
+                  <FormItem>
+                    <ImageSelector
+                      onSelect={form.setValue.bind(null, "imageUri")}
+                      selected={form.getValues("imageUri")}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-neutral-900 text-sm font-semibold uppercase">
-                       Name
+                      Name
                     </FormLabel>
                     <FormControl>
                       <Input
-                      disabled={isLoading}
-                      placeholder="Enter a worksapce name..."
-                      className="bg-white ring-1 ring-neutral-200 focus-visible:ring-neutral-300
+                        disabled={isLoading}
+                        placeholder="Enter a worksapce name..."
+                        className="bg-white ring-1 ring-neutral-200 focus-visible:ring-neutral-300
                          text-neutral-900 focus-visible:ring-offset-1"
                         {...field}
                       />
@@ -99,25 +120,14 @@ const CreateWorkspaceModal = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="imageUri"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-neutral-900 text-sm font-semibold uppercase">
-                       Image
-                    </FormLabel>
-                    <ImageUpload
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
             <DialogFooter className="bg-neutral-100 p-4 w-full">
-              <Button disabled={isLoading} variant="primary" className="w-full md:w-auto" size="lg">
+              <Button
+                disabled={isLoading}
+                variant="primary"
+                className="w-full md:w-auto"
+                size="lg"
+              >
                 Create
               </Button>
             </DialogFooter>
@@ -128,4 +138,4 @@ const CreateWorkspaceModal = () => {
   );
 };
 
-export default CreateWorkspaceModal;
+export default CreateBoardModal;
